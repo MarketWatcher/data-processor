@@ -1,0 +1,4 @@
+GET     /                           controllers.ServiceController.index
+GET     /trends/:alertId            controllers.ServiceController.trends(alertId: String)
+
+
