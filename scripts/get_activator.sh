@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 PREV=`pwd`
-ACTIVATOR_DIRECTORY=/tmp/activator-1.3.10-minimal
+ACTIVATOR_DIRECTORY=activator-1.3.10-minimal
 
 cd /tmp
 
