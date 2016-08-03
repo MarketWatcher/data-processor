@@ -1,2 +1,4 @@
 target
 .idea
+RUNNING_PID
+*.log
