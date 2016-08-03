@@ -15,7 +15,7 @@ import org.joda.time.{DateTime, DateTimeZone}
 import com.datastax.driver.core.utils.UUIDs
 
 
-object ___TwitterProcessor {
+object TwitterProcessor {
 
   var process_time = 10
   var alertID: UUID = _
@@ -24,6 +24,11 @@ object ___TwitterProcessor {
 
   def main(args: Array[String]) {
 
+    while (true) {
+      println("Processor polling")
+      Thread.sleep(5000)
+    }
+/*
     setupTwitter()
 
     Logger.getRootLogger.setLevel(Level.ERROR)
@@ -40,20 +45,12 @@ object ___TwitterProcessor {
 
     ssc.start()
     ssc.awaitTermination()
+*/
   }
 
   def filterForAtLeastOne(tweets: DStream[Status], keys: Array[String]): DStream[String] = {
     val texts = tweets.map(_.getText())
     texts.filter(text => keys.exists(text.contains))
-  }
-
-  def setupTwitter() = {
-    for (line <- Source.fromInputStream(ClassLoader.getSystemResourceAsStream("twitter.txt.dist")).getLines) {
-      val fields = line.split("=")
-      if (fields.length == 2) {
-        System.setProperty("twitter4j.oauth." + fields(0), fields(1))
-      }
-    }
   }
 
   def countByWindow(matchedTweets: DStream[String], windowDuration: Long, slideDuration: Long): DStream[Long] = {

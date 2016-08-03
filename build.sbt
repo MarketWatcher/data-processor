@@ -1,4 +1,4 @@
-name := "data-processing"
+name := "data-processor"
 
 version := "1.0"
 
@@ -14,3 +14,8 @@ libraryDependencies ++= Seq(
   "org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test" copy (isChanging = false),
   "com.sksamuel.kafka.embedded" % "embedded-kafka_2.11" % "0.21.0" copy (isChanging = false)
 )
+
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case x => MergeStrategy.first
+}

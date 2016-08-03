@@ -1,5 +1,5 @@
 processor:
-  image: thoughtworksturkey/marketwatcher-data-processing-service
+  image: thoughtworksturkey/marketwatcher-data-processor
   environment:
     - CASSANDRA_NODES=db
     - KAFKA_CONNECTION_STRING="sadfasdfadsf"
