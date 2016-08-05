@@ -1,7 +1,7 @@
 processor:
   image: thoughtworksturkey/marketwatcher-data-processor
   environment:
-    - CASSANDRA_NODES=db
+    - CASSANDRA_NODES=db:42002
     - KAFKA_CONNECTION_STRING="sadfasdfadsf"
   links:
     - "db"
@@ -9,7 +9,7 @@ processor:
 trend:
   image: thoughtworksturkey/marketwatcher-trend-service
   environment:
-    - CASSANDRA_NODES=db
+    - CASSANDRA_NODES=db:42002
   links:
     - "db"
   ports:
@@ -18,4 +18,4 @@ trend:
 db:
   image: cassandra:2.2
   ports:
-    - "9042:9042"
+    - "42002:9042"
