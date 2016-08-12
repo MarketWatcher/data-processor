@@ -1,7 +1,4 @@
-FROM java:8
+FROM velvia/spark-jobserver:0.6.2.mesos-0.28.1.spark-1.6.1
 
-COPY target/scala-2.11/data-processor-assembly-1.0.jar /opt/processor.jar
+COPY scripts/wait-for-it.sh /wait-for-it.sh
 
-WORKDIR /opt
-
-ENTRYPOINT ["java", "-jar", "/opt/processor.jar"]

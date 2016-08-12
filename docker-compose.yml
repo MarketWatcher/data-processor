@@ -1,15 +1,13 @@
 processor:
   image: thoughtworksturkey/marketwatcher-data-processor
-  environment:
-    - CASSANDRA_NODES=db:42002
-    - KAFKA_CONNECTION_STRING="sadfasdfadsf"
   links:
     - "db"
+  entrypoint: /wait-for-it.sh db:9042 -- app/server_start.sh
 
 trend:
   image: thoughtworksturkey/marketwatcher-trend-service
   environment:
-    - CASSANDRA_NODES=db:42002
+    - CASSANDRA_NODES=db:9042
   links:
     - "db"
   ports:
@@ -17,5 +15,3 @@ trend:
 
 db:
   image: cassandra:2.2
-  ports:
-    - "42002:9042"
