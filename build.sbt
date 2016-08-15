@@ -11,8 +11,10 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-streaming-kafka" % "1.6.1" copy (isChanging = false),
   "org.apache.spark" %% "spark-sql" % "1.6.1" % "provided" copy (isChanging = false),
   "com.datastax.spark" %% "spark-cassandra-connector" % "1.6.0" copy (isChanging = false),
-  "spark.jobserver" % "job-server-api_2.10" % "0.6.2" % "provided" copy (isChanging = false)
+  "spark.jobserver" %% "job-server-api" % "0.6.2" % "provided" copy (isChanging = false)
 )
+
+resolvers += "Job Server Bintray" at "https://dl.bintray.com/spark-jobserver/maven"
 
 dependencyOverrides ++= Set(
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.4"
