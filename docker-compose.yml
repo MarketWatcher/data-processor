@@ -2,6 +2,12 @@ processor:
   image: thoughtworksturkey/marketwatcher-data-processor
   links:
     - "db"
+  environment:
+    - KAFKA_BROKER=${KAFKA_BROKER}
+    - GROUP=${GROUP}
+    - TOPICS=${TOPICS}
+    - NUM_THREADS=${NUM_THREADS}
+    - CASSANDRA_NODES=db
   entrypoint: /wait-for-it.sh db:9042 -- app/server_start.sh
 
 trend:

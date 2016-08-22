@@ -1,4 +1,8 @@
 # MarketWatcher Data Processor
 
-Usage:kafkaBroker=localhost:2400 group=consumerGroup topics=tweets numThreads=2 cassandraHost=localhost sbt "run-main TwitterProcessor"
+## Running
+```bash
+KAFKA_BROKER=<broker> GROUP=<consumer-group> TOPICS=<topics> NUM_THREADS=<num-threads> CASSANDRA_NODES=<cassandra-nodes> sbt "run-main TwitterProcessor"
+
+```
 

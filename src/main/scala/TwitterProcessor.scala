@@ -13,13 +13,10 @@ object TwitterProcessor {
 
   var batch_interval_in_seconds = 10
   var window_in_minutes = 60
-  var slide_in_seconds = 10
-  var alertID: UUID = _
-  var requiredKeys: Array[String] = _
-  var niceToHaveKeys: Array[String] = _
+  var slide_in_seconds = 60
 
   def main(args: Array[String]) {
-    val Array(kafkaBroker, group, topics, numThreads, cassandraHost) = Array(sys.env("kafkaBroker"), sys.env("group"), sys.env("topics"), sys.env("numThreads"), sys.env("cassandraHost"))
+    val Array(kafkaBroker, group, topics, numThreads, cassandraHost) = Array(sys.env("KAFKA_BROKER"), sys.env("GROUP"), sys.env("TOPICS"), sys.env("NUM_THREADS"), sys.env("CASSANDRA_NODES"))
     val ssc: StreamingContext = createSparkStreamingContext(cassandraHost)
 
     val topicMap = topics.split(",").map((_, numThreads.toInt)).toMap
@@ -45,7 +42,8 @@ object TwitterProcessor {
   }
 
   def getCountStreamOfTweets(tweets: DStream[(String)]): DStream[(String, Int)] = {
-    tweets.map((_, 1)).reduceByKeyAndWindow((a: Int, b: Int) => a + b, Minutes(window_in_minutes), Seconds(slide_in_seconds))
+    tweets.map((_, 1))
+      .reduceByKeyAndWindow((a: Int, b: Int) => a + b, Minutes(window_in_minutes), Seconds(slide_in_seconds))
   }
 
   def saveToDb(countStream: DStream[(String, Int)]) = {
