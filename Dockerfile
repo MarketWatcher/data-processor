@@ -1,4 +1,6 @@
-FROM velvia/spark-jobserver:0.6.2.mesos-0.28.1.spark-1.6.1
+FROM sequenceiq/spark:1.6.0
 
-COPY scripts/wait-for-it.sh /wait-for-it.sh
+COPY target/scala-2.10/data-processor-assembly-1.0.jar /opt/data-processor.jar
+
+CMD spark-submit --master local --class TwitterProcessor /opt/data-processor.jar
 
