@@ -8,7 +8,6 @@ import org.apache.spark.streaming._
 import org.apache.spark.streaming.dstream.{ReceiverInputDStream, DStream}
 import org.apache.spark.streaming.kafka.KafkaUtils
 
-
 object TwitterProcessor {
 
   var batch_interval_in_seconds = 10
