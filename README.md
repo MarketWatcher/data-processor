@@ -6,3 +6,5 @@ KAFKA_BROKER=<broker> GROUP=<consumer-group> TOPICS=<topics> NUM_THREADS=<num-th
 
 ```
 
+## Testing
+
