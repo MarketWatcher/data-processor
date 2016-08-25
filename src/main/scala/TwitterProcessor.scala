@@ -8,20 +8,21 @@ import org.apache.spark.streaming._
 import org.apache.spark.streaming.dstream.{ReceiverInputDStream, DStream}
 import org.apache.spark.streaming.kafka.KafkaUtils
 
-
 object TwitterProcessor {
 
   var batch_interval_in_seconds = 10
   var window_in_minutes = 60
-  var slide_in_seconds = 60
+  var slide_in_seconds = 10
 
   def main(args: Array[String]) {
     val Array(kafkaZooKeeper, group, topics, numThreads, cassandraHost) = Array(sys.env("KAFKA_ZOO_KEEPER"), sys.env("GROUP"), sys.env("TOPICS"), sys.env("NUM_THREADS"), sys.env("CASSANDRA_NODES"))
     val ssc: StreamingContext = createSparkStreamingContext(cassandraHost)
 
     val topicMap = topics.split(",").map((_, numThreads.toInt)).toMap
+
     val lines = KafkaUtils.createStream(ssc, kafkaZooKeeper, group, topicMap).map(_._1)
     val countStream = getCountStreamOfTweets(lines)
+
     saveToDb(countStream)
 
     ssc.start()
@@ -42,6 +43,8 @@ object TwitterProcessor {
   }
 
   def getCountStreamOfTweets(tweets: DStream[(String)]): DStream[(String, Int)] = {
+    println(window_in_minutes)
+    println(slide_in_seconds)
     tweets.map((_, 1))
       .reduceByKeyAndWindow((a: Int, b: Int) => a + b, Minutes(window_in_minutes), Seconds(slide_in_seconds))
   }
