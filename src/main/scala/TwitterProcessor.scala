@@ -31,6 +31,7 @@ object TwitterProcessor {
   def createSparkStreamingContext(cassandraHost: String): StreamingContext = {
     val conf = new SparkConf().setMaster("local[*]").setAppName("data-processor: ")
     conf.set("spark.cassandra.connection.host", cassandraHost)
+    conf.set("spark.cassandra.connection.keep_alive_ms", "100000")
 
     val ssc = new StreamingContext(conf, Seconds(batch_interval_in_seconds))
     ssc.checkpoint("checkpoint")
