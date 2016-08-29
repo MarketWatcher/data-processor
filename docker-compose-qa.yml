@@ -1,0 +1,24 @@
+processor:
+  image: thoughtworksturkey/marketwatcher-data-processor:alpha
+  links:
+    - "db"
+  environment:
+    - KAFKA_BROKER=${KAFKA_BROKER}
+    - GROUP=${GROUP}
+    - TOPICS=${TOPICS}
+    - NUM_THREADS=${NUM_THREADS}
+    - CASSANDRA_NODES=db
+  entrypoint: /wait-for-it.sh db:9042 -- "spark-submit --master local --class TwitterProcessor /opt/data-processor.jar"
+
+trend:
+  image: thoughtworksturkey/marketwatcher-trend-service
+  environment:
+    - CASSANDRA_NODES=db:9042
+  links:
+    - "db"
+  ports:
+    - "10900:10900"
+  entrypoint: /wait-for-it.sh db:9042 -- /opt/trend-service-1.0-SNAPSHOT/bin/trend-service
+
+db:
+  image: cassandra:2.2
