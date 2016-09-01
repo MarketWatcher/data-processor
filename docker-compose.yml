@@ -3,7 +3,7 @@ processor:
   links:
     - "db"
   environment:
-    - KAFKA_BROKER=${KAFKA_BROKER}
+    - KAFKA_ZOO_KEEPER=${KAFKA_ZOO_KEEPER}
     - GROUP=${GROUP}
     - TOPICS=${TOPICS}
     - NUM_THREADS=${NUM_THREADS}

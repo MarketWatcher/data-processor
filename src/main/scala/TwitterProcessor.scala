@@ -16,11 +16,11 @@ object TwitterProcessor {
   var slide_in_seconds = 60
 
   def main(args: Array[String]) {
-    val Array(kafkaBroker, group, topics, numThreads, cassandraHost) = Array(sys.env("KAFKA_BROKER"), sys.env("GROUP"), sys.env("TOPICS"), sys.env("NUM_THREADS"), sys.env("CASSANDRA_NODES"))
+    val Array(kafkaZooKeeper, group, topics, numThreads, cassandraHost) = Array(sys.env("KAFKA_ZOO_KEEPER"), sys.env("GROUP"), sys.env("TOPICS"), sys.env("NUM_THREADS"), sys.env("CASSANDRA_NODES"))
     val ssc: StreamingContext = createSparkStreamingContext(cassandraHost)
 
     val topicMap = topics.split(",").map((_, numThreads.toInt)).toMap
-    val lines = KafkaUtils.createStream(ssc, kafkaBroker, group, topicMap).map(_._1)
+    val lines = KafkaUtils.createStream(ssc, kafkaZooKeeper, group, topicMap).map(_._1)
     val countStream = getCountStreamOfTweets(lines)
     saveToDb(countStream)
 
