@@ -2,3 +2,5 @@ target
 .idea
 RUNNING_PID
 *.log
+.DS_Store
+checkpoint

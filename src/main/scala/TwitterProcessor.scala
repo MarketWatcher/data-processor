@@ -13,10 +13,12 @@ object TwitterProcessor {
   var batch_interval_in_seconds = 10
   var window_in_minutes = 60
   var slide_in_seconds = 10
+  var cassandraHost = null
 
   def main(args: Array[String]) {
     val Array(kafkaZooKeeper, group, topics, numThreads, cassandraHost) = Array(sys.env("KAFKA_ZOO_KEEPER"), sys.env("GROUP"), sys.env("TOPICS"), sys.env("NUM_THREADS"), sys.env("CASSANDRA_NODES"))
-    val ssc: StreamingContext = createSparkStreamingContext(cassandraHost)
+    val ssc: StreamingContext = new StreamingContext(createSparkConf().set("spark.cassandra.connection.host", cassandraHost), Seconds(batch_interval_in_seconds))
+    ssc.checkpoint("checkpoint")
 
     val topicMap = topics.split(",").map((_, numThreads.toInt)).toMap
 
@@ -29,30 +31,16 @@ object TwitterProcessor {
     ssc.awaitTermination()
   }
 
-  def createSparkStreamingContext(cassandraHost: String): StreamingContext = {
-    val conf = new SparkConf().setMaster("local[*]").setAppName("data-processor: ")
-    conf.set("spark.cassandra.connection.host", cassandraHost)
-
-    val ssc = new StreamingContext(conf, Seconds(batch_interval_in_seconds))
-    ssc.checkpoint("checkpoint")
-    ssc
+  def createSparkConf(): SparkConf = {
+    new SparkConf().setMaster("local[*]").setAppName("data-processor: ")
   }
 
-  def countByWindow(matchedTweets: DStream[String], windowDuration: Long, slideDuration: Long): DStream[Long] = {
-    matchedTweets.countByWindow(Seconds(windowDuration), Seconds(slideDuration))
+  def getCountStreamOfTweets(tweets: DStream[(String)]): DStream[(String, Long)] = {
+    tweets.countByValueAndWindow(Minutes(window_in_minutes), Seconds(slide_in_seconds))
   }
 
-  def getCountStreamOfTweets(tweets: DStream[(String)]): DStream[(String, Int)] = {
-    println(window_in_minutes)
-    println(slide_in_seconds)
-    tweets.map((_, 1))
-      .reduceByKeyAndWindow((a: Int, b: Int) => a + b, Minutes(window_in_minutes), Seconds(slide_in_seconds))
-  }
-
-  def saveToDb(countStream: DStream[(String, Int)]) = {
-    val toDb = countStream.map { case (alertId: String, count: Int) =>
-      (UUIDs.timeBased(), UUID.fromString(alertId), count, new Date())
-    }
+  def saveToDb(countStream: DStream[(String, Long)]) = {
+    val toDb = countStream.map { case (alertId: String, count: Long) => (UUIDs.timeBased(), UUID.fromString(alertId), count, new Date())}
     toDb.saveToCassandra("trends", "trend", SomeColumns("id", "alert_id", "count", "process_date"))
   }
 }
