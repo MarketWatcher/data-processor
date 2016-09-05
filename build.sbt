@@ -16,10 +16,9 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-sql" % "1.6.2" copy (isChanging = false),
   "com.datastax.spark" %% "spark-cassandra-connector" % "1.6.0" copy (isChanging = false),
   "org.scalatest" %% "scalatest" % "3.0.0"  % "test",
-  "com.datastax.spark" %% "spark-cassandra-connector-embedded" % "1.1.2" copy (isChanging = false)
+  "com.datastax.spark" %% "spark-cassandra-connector-embedded" % "1.1.2" copy (isChanging = false),
+  "org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test" copy (isChanging = false)
 )
-
-libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test"
 
 dependencyOverrides ++= Set(
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.4"

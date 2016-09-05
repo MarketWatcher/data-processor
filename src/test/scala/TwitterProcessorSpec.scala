@@ -19,13 +19,14 @@ class TwitterProcessorSpec extends FlatSpec with BeforeAndAfter with GivenWhenTh
   var batch_interval_in_seconds = 1
   var window_in_seconds = 5
   var slide_in_seconds = 1
+  var patienceConfigMillis = 10000
 
   private var sc: SparkContext = _
   private var ssc: StreamingContext = _
 
   // default timeout for eventually trait
   implicit override val patienceConfig =
-    PatienceConfig(timeout = scaled(Span(1000, Millis)))
+    PatienceConfig(timeout = scaled(Span(patienceConfigMillis, Millis)))
 
   case class AlertTrend(alertId: UUID, count: Int)
 
@@ -62,7 +63,7 @@ class TwitterProcessorSpec extends FlatSpec with BeforeAndAfter with GivenWhenTh
 
     When("time passes")
     lines += sc.makeRDD(List(firstAlertId.toString, firstAlertId.toString, secondAlertId.toString, thirdAlertId.toString, firstAlertId.toString))
-    ClockWrapper.advance(ssc, Duration(10000))
+    ClockWrapper.advance(ssc, Duration(patienceConfigMillis))
 
     Then("list contains tweets")
     val expectedList = List((firstAlertId, 3), (secondAlertId, 1), (thirdAlertId, 1))
