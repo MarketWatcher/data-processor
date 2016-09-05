@@ -6,7 +6,7 @@ scalaVersion := "2.10.5"
 
 fork := true
 
-coverageEnabled := true
+coverageEnabled in Test := true
 
 libraryDependencies ++= Seq(
   "org.apache.spark" % "spark-core_2.10" % "1.6.2" copy (isChanging = false),
